@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Integrado - Itaqui Bacanga</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="auth-app">
+        <div id="loginPage" class="auth-page active">
+            <div class="login-container">
+                
+                <div id="loginBox">
+                    <div class="logo-area">
+                        <div class="avatar-circle" style="margin: 0 auto 15px; width: 70px; height: 70px; font-size: 2rem;">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                        <h1 class="logo-title">Associação Comunitária Itaqui Bacanga</h1>
+                        <p class="logo-subtitle">Sistema Integrado de Gestão</p>
+                    </div>
+                    
+                    <div class="alert" id="loginAlert"></div>
+                    
+                    <form id="loginForm" class="login-form" onsubmit="sistemaAuth.fazerLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail">E-mail</label>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="exemplo@email.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Senha</label>
+                            <div class="password-container">
+                                <input type="password" id="loginPassword" class="form-control" placeholder="Digite sua senha" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">👁️</button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Entrar no Sistema</button>
+                        
+                        <div class="login-links">
+                            <a href="#" class="login-link" onclick="sistemaAuth.showPage('registerUser'); return false;">Primeiro acesso? Cadastre-se aqui</a>
+                            <a href="#" class="login-link" onclick="sistemaAuth.mostrarRecuperacao(); return false;">Esqueci minha senha</a>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="recuperarSenhaBox" style="display:none;">
+                    <div class="logo-area">
+                        <div class="avatar-circle" style="margin: 0 auto 15px; width: 70px; height: 70px; font-size: 2rem;">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h1 class="logo-title">Recuperar Senha</h1>
+                        <p class="logo-subtitle">Informe seu e-mail para continuar</p>
+                    </div>
+
+                    <form class="login-form" onsubmit="sistemaAuth.enviarRecuperacao(event)">
+                        <div class="form-group">
+                            <label>E-mail cadastrado</label>
+                            <input type="email" id="emailRecuperacao" class="form-control" placeholder="seu.email@exemplo.com" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Enviar link de recuperação</button>
+                    </form>
+
+                    <div class="login-links">
+                        <a href="#" class="login-link" onclick="sistemaAuth.voltarLogin(); return false;">← Voltar para o login</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="registerUserPage" class="auth-page">
+            <div class="login-container">
+                <div class="logo-area">
+                    <h1 class="logo-title">Criar Nova Conta</h1>
+                    <p class="logo-subtitle">Preencha os dados para acessar o sistema</p>
+                </div>
+                
+                <div class="alert" id="registerAlert"></div>
+                
+                <form id="registerUserForm" class="login-form" onsubmit="sistemaAuth.registrarUsuario(event)">
+                    <div class="form-group">
+                        <label for="registerEmail">E-mail</label>
+                        <input type="email" id="registerEmail" class="form-control" placeholder="seu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Senha</label>
+                        <div class="password-container">
+                            <input type="password" id="registerPassword" class="form-control" placeholder="Mínimo 6 caracteres" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('registerPassword')">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">Confirmar Senha</label>
+                        <div class="password-container">
+                            <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Digite a senha novamente" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('registerConfirmPassword')">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Criar Conta</button>
+                    
+                    <div class="login-links">
+                        <a href="#" class="login-link" onclick="sistemaAuth.showPage('login'); return false;">← Voltar para Login</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app" class="container" style="display: none;">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="avatar-circle">
+                    <i class="fas fa-recycle" style="font-size: 1.5rem;"></i>
+                </div>
+                <h3>Associação Comunitária<br>do Itaqui Bacanga</h3>
+            </div>
+            <nav>
+                <ul>
+                    <li id="menu-cadastro" onclick="navegarPara('cadastro')">
+                        <a href="#"><i class="fas fa-user-plus"></i> Cadastro</a>
+                    </li>
+                    <li id="menu-controle" class="active" onclick="navegarPara('controle')">
+                        <a href="#"><i class="fas fa-boxes"></i> Controle</a>
+                    </li>
+                    <li id="menu-financeiro" onclick="navegarPara('financeiro')">
+                        <a href="#"><i class="fas fa-dollar-sign"></i> Financeiro</a>
+                    </li>
+                    <li id="menu-relatorios" onclick="navegarPara('relatorios')">
+                        <a href="#"><i class="fas fa-chart-bar"></i> Relatórios</a>
+                    </li>
+                    <li id="menu-notificacoes" onclick="navegarPara('notificacoes')">
+                        <a href="#"><i class="fas fa-bell"></i> Notificações</a>
+                    </li>
+                    <li id="menu-sair" onclick="sistemaAuth.logout()" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <a href="#"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section id="view-cadastro" class="view-section" style="display: none;">
+                <div id="cadastro-lista-screen">
+                    <div class="cadastro-container">
+                        <div class="cadastro-header">
+                            <h1 class="cad-title">Lista de Cadastros</h1>
+                            <p class="cad-subtitle">Gestão de Associados e Parceiros</p>
+                            <div class="cad-controls">
+                                <div class="cad-search-box">
+                                    <input type="text" id="searchCadastroInput" placeholder="Buscar por nome, CPF ou CNPJ..." onkeyup="sistemaCadastro.searchCadastros()">
+                                </div>
+                                <div class="cad-action-buttons">
+                                    <button class="btn-cad-primary" onclick="sistemaCadastro.mostrarFormulario()">
+                                        <i class="fas fa-plus"></i> Novo Cadastro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert" id="listAlert"></div>
+                        <div class="cad-table-container">
+                            <table id="cadastrosTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nome/Razão Social</th>
+                                        <th>Tipo</th>
+                                        <th>Documento</th>
+                                        <th>Status</th>
+                                        <th>Situação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBodyCadastro"></tbody>
+                            </table>
+                        </div>
+                        <div class="project-info">
+                            <p><strong>Total:</strong> <span id="totalCadastros">0</span> (PF: <span id="totalPF">0</span> | PJ: <span id="totalPJ">0</span>)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cadastro-form-screen" style="display: none;">
+                    <div class="cadastro-container">
+                        <div class="logo-area">
+                            <h1 class="cad-title" id="pageTitle">Cadastro de Pessoa Física</h1>
+                            <p class="cad-subtitle" id="pageSubtitle">Preencha os dados abaixo</p>
+                        </div>
+                        <div class="navigation-tabs">
+                            <button id="tabPF" class="nav-tab active" onclick="sistemaCadastro.setTipoCadastro('PF')">Pessoa Física</button>
+                            <button id="tabPJ" class="nav-tab" onclick="sistemaCadastro.setTipoCadastro('PJ')">Pessoa Jurídica</button>
+                        </div>
+                        <div class="alert" id="formAlert"></div>
+
+                        <form id="formPF" class="form-cad-container active" onsubmit="sistemaCadastro.salvarCadastro(event)">
+                            <div class="form-cad-section">
+                                <h3 class="form-section-title">Dados Pessoais</h3>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Nome Completo</label>
+                                        <input type="text" id="nome" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">CPF</label>
+                                        <input type="text" id="cpf" class="form-control-cadastro" maxlength="14" placeholder="000.000.000-00" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>RG</label>
+                                        <input type="text" id="rg" class="form-control-cadastro">
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Data de Nascimento</label>
+                                        <input type="date" id="dataNascimento" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Gênero</label>
+                                        <select id="genero" class="form-control-cadastro">
+                                            <option value="">Selecione</option>
+                                            <option value="masculino">Masculino</option>
+                                            <option value="feminino">Feminino</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-cad-section">
+                                <h3 class="form-section-title">Contato e Endereço</h3>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">E-mail</label>
+                                        <input type="email" id="emailPF" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">WhatsApp</label>
+                                        <input type="tel" id="whatsapp" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Telefone</label>
+                                        <input type="tel" id="telefone" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">UF</label>
+                                        <select id="uf" class="form-control-cadastro" onchange="sistemaCadastro.carregarCidadesPF()" required>
+                                            <option value="">Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Cidade</label>
+                                        <select id="cidade" class="form-control-cadastro" required></select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Bairro</label>
+                                        <input type="text" id="bairro" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Logradouro</label>
+                                        <input type="text" id="logradouro" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Número</label>
+                                        <input type="text" id="numero" class="form-control-cadastro" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Complemento</label>
+                                        <input type="text" id="complemento" class="form-control-cadastro">
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Status</label>
+                                        <select id="statusPF" class="form-control-cadastro">
+                                            <option value="Ativo">Ativo</option>
+                                            <option value="Inativo">Inativo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-cad-back" onclick="sistemaCadastro.voltarParaLista()">Voltar</button>
+                                <button type="submit" class="btn-cad-primary">Cadastrar Pessoa Física</button>
+                            </div>
+                        </form>
+
+                        <form id="formPJ" class="form-cad-container" onsubmit="sistemaCadastro.salvarCadastro(event)">
+                            <div class="form-cad-section">
+                                <h3 class="form-section-title">Dados da Empresa</h3>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Razão Social</label>
+                                        <input type="text" id="razaoSocial" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Nome Fantasia</label>
+                                        <input type="text" id="nomeFantasia" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">CNPJ</label>
+                                        <input type="text" id="cnpj" class="form-control-cadastro" maxlength="18" placeholder="00.000.000/0000-00" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Inscrição Estadual</label>
+                                        <input type="text" id="inscricaoEstadual" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Ramo de Atividade</label>
+                                        <select id="ramoAtividade" class="form-control-cadastro">
+                                            <option value="">Selecione</option>
+                                            <option value="comercio">Comércio</option>
+                                            <option value="industria">Indústria</option>
+                                            <option value="servicos">Serviços</option>
+                                            <option value="ong">ONG/Associação</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>Ano de Fundação</label>
+                                        <input type="number" id="anoFundacao" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-cad-section">
+                                <h3 class="form-section-title">Contato e Endereço</h3>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">E-mail Corporativo</label>
+                                        <input type="email" id="emailPJ" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Telefone</label>
+                                        <input type="tel" id="telefonePJ" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>WhatsApp</label>
+                                        <input type="tel" id="whatsappPJ" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Site</label>
+                                        <input type="url" id="site" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">UF</label>
+                                        <select id="ufPJ" class="form-control-cadastro" onchange="sistemaCadastro.carregarCidadesPJ()" required>
+                                            <option value="">Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Cidade</label>
+                                        <select id="cidadePJ" class="form-control-cadastro" required></select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Bairro</label>
+                                        <input type="text" id="bairroPJ" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Logradouro</label>
+                                        <input type="text" id="logradouroPJ" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Número</label>
+                                        <input type="text" id="numeroPJ" class="form-control-cadastro" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Complemento</label>
+                                        <input type="text" id="complementoPJ" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-cad-section">
+                                <h3 class="form-section-title">Responsável Legal</h3>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label class="required">Nome do Responsável</label>
+                                        <input type="text" id="responsavelNome" class="form-control-cadastro" required>
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label class="required">CPF do Responsável</label>
+                                        <input type="text" id="responsavelCPF" class="form-control-cadastro" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Cargo</label>
+                                        <input type="text" id="responsavelCargo" class="form-control-cadastro">
+                                    </div>
+                                    <div class="form-group-cadastro">
+                                        <label>E-mail do Responsável</label>
+                                        <input type="email" id="responsavelEmail" class="form-control-cadastro">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-cadastro">
+                                        <label>Status</label>
+                                        <select id="statusPJ" class="form-control-cadastro">
+                                            <option value="Ativo">Ativo</option>
+                                            <option value="Inativo">Inativo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-cad-back" onclick="sistemaCadastro.voltarParaLista()">Voltar</button>
+                                <button type="submit" class="btn-cad-primary">Cadastrar Pessoa Jurídica</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-controle" class="view-section active-view">
+                <header>
+                    <h2>Controle de Materiais Recicláveis</h2>
+                    <div class="user-actions">
+                        <i class="fas fa-cog" onclick="abrirModalConfigPrincipal()" title="Configurações"></i>
+                        </div>
+                </header>
+                <div class="stats-cards">
+                    <div class="card">
+                        <h3>Volume total:</h3>
+                        <p id="displayVolumeTotal">0 Kg</p>
+                    </div>
+                    <div class="card">
+                        <h3>Capacidade de Armazenamento:</h3>
+                        <p id="displayCapacidade">10.000 Kg</p>
+                    </div>
+                    <div class="card">
+                        <h3>Tipos de Materiais:</h3>
+                        <p id="displayTipos">0</p>
+                    </div>
+                </div>
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Pesquisa material..." onkeyup="filtrarTabela()">
+                    </div>
+                    <button class="btn-primary" onclick="abrirModalRegistro()">
+                        <i class="fas fa-plus"></i> Novo Registro
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material (Tipo)</th>
+                                <th>Volume (Kg)</th>
+                                <th>Armazenamento</th>
+                                <th>Frequência</th>
+                                <th>Última Atualização</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCorpo"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="view-financeiro" class="view-section" style="display: none;">
+                <header>
+                    <h2>Gestão Financeira</h2>
+                </header>
+                <div class="fin-dashboard-container">
+                    <div class="fin-summary-cards">
+                        <div class="fin-card income">
+                            <h3><i class="fas fa-arrow-up"></i> Entradas</h3>
+                            <p id="totalIncome">R$ 0,00</p>
+                        </div>
+                        <div class="fin-card expense">
+                            <h3><i class="fas fa-arrow-down"></i> Saídas</h3>
+                            <p id="totalExpense">R$ 0,00</p>
+                        </div>
+                        <div class="fin-card balance">
+                            <h3><i class="fas fa-wallet"></i> Saldo Atual</h3>
+                            <p id="totalBalance">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="fin-content-area">
+                        <div class="fin-form-section">
+                            <h2>Novo Lançamento</h2>
+                            <form id="financeForm" onsubmit="adicionarTransacao(event)">
+                                <div class="fin-form-group">
+                                    <label>Descrição</label>
+                                    <input type="text" id="descFin" class="fin-form-control" placeholder="Ex: Mensalidade, Conserto..." required>
+                                </div>
+                                <div class="fin-form-row">
+                                    <div class="fin-form-group half">
+                                        <label>Valor (R$)</label>
+                                        <input type="number" step="0.01" id="amountFin" class="fin-form-control" placeholder="0,00" required>
+                                    </div>
+                                    <div class="fin-form-group half">
+                                        <label>Tipo</label>
+                                        <select id="typeFin" class="fin-form-control" onchange="atualizarCategoriasFin()">
+                                            <option value="entrada">Entrada (+)</option>
+                                            <option value="saida">Saída (-)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="fin-form-group">
+                                    <label>Categoria / Classificação</label>
+                                    <select id="categoryFin" class="fin-form-control"></select>
+                                </div>
+                                <button type="submit" class="fin-login-btn fin-action-btn">Adicionar Lançamento</button>
+                            </form>
+                        </div>
+                        <div class="fin-table-section">
+                            <h2>Histórico de Lançamentos</h2>
+                            <div class="fin-table-responsive">
+                                <table class="finance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Categoria</th>
+                                            <th>Tipo</th>
+                                            <th>Valor</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transactionsList"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-relatorios" class="view-section" style="display: none;">
+                <header>
+                    <h2>Relatórios</h2>
+                </header>
+                <div class="reports-toolbar">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="filtrarRelatorios('todos', this)">Todos</button>
+                        <button class="tab-btn" onclick="filtrarRelatorios('mensal', this)">Mensal</button>
+                        <button class="tab-btn" onclick="filtrarRelatorios('semanal', this)">Semanal</button>
+                        <button class="tab-btn" onclick="filtrarRelatorios('anual', this)">Anual</button>
+                    </div>
+                    <div class="reports-actions">
+                        <div class="search-box-light">
+                            <input type="text" placeholder="Buscar relatórios..." onkeyup="buscaRelatorios(this.value)">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <button class="btn-dark" onclick="abrirModalRelatorio()">Novo relatório</button>
+                    </div>
+                </div>
+                <div class="reports-counter">
+                    <span id="contadorRelatorios">0 relatórios encontrados</span>
+                </div>
+                <div class="table-container-clean">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo</th>
+                                <th>Data de geração</th>
+                                <th>Usuário</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaRelatoriosCorpo"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="view-notificacoes" class="view-section" style="display: none;">
+                <div class="notificacao-card">
+                    <h2 class="notificacao-titulo">Configuração de Notificações</h2>
+                    <p class="notificacao-descricao">
+                        Selecione o tipo de notificação e personalize como deseja receber os avisos.
+                    </p>
+            
+                    <label for="tipoNotificacao" class="notificacao-label-strong">Tipo de notificação</label>
+                    <select id="tipoNotificacao" class="notificacao-select">
+                        <option value="">Selecione uma opção</option>
+                        <option value="pagamento">Notificações de pagamento</option>
+                        <option value="pendencias">Notificações de pendências</option>
+                        <option value="clientes">Informações aos clientes</option>
+                    </select>
+            
+                    <div class="notificacao-configuracao" id="configuracaoNotificacao">
+                        <div class="checkbox-group-master">
+                            <input type="checkbox" id="chkAtivarNotificacao">
+                            <label for="chkAtivarNotificacao">Ativar notificações</label>
+                        </div>
+            
+                        <div class="canais">
+                            <p class="subtitulo-canais">Formas de aviso</p>
+            
+                            <div class="canal-item">
+                                <input type="checkbox" class="canal" value="whatsapp" disabled>
+                                <label>WhatsApp</label>
+                            </div>
+            
+                            <div class="canal-item">
+                                <input type="checkbox" class="canal" value="sms" disabled>
+                                <label>SMS</label>
+                            </div>
+            
+                            <div class="canal-item">
+                                <input type="checkbox" class="canal" value="email" disabled>
+                                <label>E-mail</label>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <button id="btnSalvarNotificacao" class="btn-notification-save" disabled>Salvar configurações</button>
+                </div>
+                
+                <div class="sucesso" id="msgSucessoNotificacao">
+                    ✔ Configurações salvas com sucesso
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="modalRegistro" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="tituloModalRegistro">Novo Registro</h3>
+                <span class="close" onclick="fecharModal('modalRegistro')">&times;</span>
+            </div>
+            <form id="formRegistro">
+                <input type="hidden" id="editIndex">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Volume (Kg)</label>
+                        <input type="number" step="0.01" id="inVolume" placeholder="4.56" required>
+                    </div>
+                    <div class="form-group half">
+                        <label>Material (Tipo)</label>
+                        <select id="selMaterial" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Armazenamento</label>
+                    <select id="selArmazenamento" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Frequência (Entrada)</label>
+                    <select id="selFrequencia" required></select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="fecharModal('modalRegistro')">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalConfigMain" class="modal">
+        <div class="modal-content config-main-content">
+            <div class="modal-header">
+                <h3>Configurações de controle</h3>
+                <span class="close" onclick="fecharModal('modalConfigMain')">&times;</span>
+            </div>
+            <div class="config-body">
+                <div class="config-row">
+                    <span class="config-label">Material (Tipo)</span>
+                    <div class="config-buttons">
+                        <button class="btn-outline" onclick="abrirSubModal('materiais', 'cadastrar')">Cadastrar</button>
+                        <button class="btn-outline-danger" onclick="abrirSubModal('materiais', 'excluir')">Excluir</button>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Frequência</span>
+                    <div class="config-buttons">
+                        <button class="btn-outline" onclick="abrirSubModal('frequencia', 'cadastrar')">Cadastrar</button>
+                        <button class="btn-outline-danger" onclick="abrirSubModal('frequencia', 'excluir')">Excluir</button>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Armazenamento</span>
+                    <div class="config-buttons">
+                        <button class="btn-outline" onclick="abrirSubModal('armazenamento', 'cadastrar')">Cadastrar</button>
+                        <button class="btn-outline-danger" onclick="abrirSubModal('armazenamento', 'excluir')">Excluir</button>
+                    </div>
+                </div>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+                <div class="capacity-section">
+                    <label style="font-weight: bold; color: #555;">Capacidade de armazenagem (Kg)</label>
+                    <input type="number" id="inputCapacidadeTotal" placeholder="Digite a capacidade...">
+                    <button class="btn-save full-width" onclick="salvarCapacidade()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalSubConfig" class="modal" style="z-index: 2100;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="subModalTitulo">Título Dinâmico</h3>
+                <span class="close" onclick="fecharModal('modalSubConfig')">&times;</span>
+            </div>
+            <div class="sub-config-body">
+                <div id="areaCadastro" class="input-add-group">
+                    <input type="text" id="novoItemInput" placeholder="Digite o nome...">
+                    <button class="btn-add" onclick="adicionarItemConfig()">+</button>
+                </div>
+                <ul id="listaConfigItens" class="config-list-view"></ul>
+                <div class="modal-actions" style="justify-content: center; margin-top: 15px;">
+                     <button type="button" class="btn-save" onclick="voltarParaConfigMain()">Concluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalRelatorio" class="modal">
+        <div class="modal-content" style="width: 450px;">
+            <div class="modal-header-center">
+                <h3 id="tituloModalRelatorio">Escolha a categoria</h3>
+            </div>
+            <form id="formRelatorio" onsubmit="processarRelatorio(event)">
+                <input type="hidden" id="editRelatorioId">
+                <div class="category-selector">
+                    <input type="radio" name="catRelatorio" id="catMensal" value="Mensal" checked hidden>
+                    <label for="catMensal" class="cat-btn active">Mensal</label>
+                    <input type="radio" name="catRelatorio" id="catSemanal" value="Semanal" hidden>
+                    <label for="catSemanal" class="cat-btn">Semanal</label>
+                    <input type="radio" name="catRelatorio" id="catAnual" value="Anual" hidden>
+                    <label for="catAnual" class="cat-btn">Anual</label>
+                </div>
+                <div class="form-group">
+                    <label class="label-clean">Tipo do Relatório</label>
+                    <input type="text" id="tipoRelatorioInput" class="input-clean" placeholder="Ex: Financeiro anual" required>
+                </div>
+                <div class="form-group">
+                    <label class="label-clean">Usuário Responsável</label>
+                    <input type="text" id="usuarioRelatorioInput" class="input-clean" placeholder="Ex: Stefan Salvatore" required>
+                </div>
+                <div class="form-group file-upload-group">
+                    <label for="fileUpload" class="btn-upload">Escolher arquivo</label>
+                    <span id="fileNameDisplay">Nenhum arquivo escolhido</span>
+                    <input type="file" id="fileUpload" hidden onchange="atualizarNomeArquivo(this)">
+                </div>
+                <div class="modal-actions-centered">
+                    <button type="button" class="btn-outline-simple" onclick="fecharModal('modalRelatorio')">Cancelar</button>
+                    <button type="submit" class="btn-dark-simple">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalDetalhesCadastro" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitleCadastro">Detalhes do Cadastro</h2>
+                <button class="close" onclick="fecharModal('modalDetalhesCadastro')">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBodyCadastro" style="padding:20px;"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="fecharModal('modalDetalhesCadastro')">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
